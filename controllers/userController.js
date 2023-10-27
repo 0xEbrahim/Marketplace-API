@@ -51,4 +51,8 @@ else
     });
 })
 
-export {getAllUsers, getSingleUsers, updateUsers, deleteUsers}
+const userProfile = asyncHandler(async(req, res, next) => {
+    // #TODO: handle user profile
+    res.send("Your profile")    
+})
+export {getAllUsers, getSingleUsers, userProfile, updateUsers, deleteUsers}

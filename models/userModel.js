@@ -2,7 +2,19 @@ import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
 
 var userSchema = new mongoose.Schema({
-    name:{
+    provider:{
+        type:String,
+        default:'normal'
+    },
+    isOnline:{
+        type:Boolean,
+        default:false
+    },
+    googleId:{
+        type:String,
+        unique: true,
+    }
+    ,name:{
         type:String,
         required:true,
     },
@@ -14,14 +26,17 @@ var userSchema = new mongoose.Schema({
     },
     mobile:{
         type:String,
-        required:true,
+        //required:true,
         unique:true,
     },
     password:{
         type:String,
         required:true,
     },
-    isAdmin: Boolean,
+    isAdmin: {
+        type:Boolean,
+         default:false
+        },
     role:{
         type:String,
         required:true,
@@ -30,10 +45,6 @@ var userSchema = new mongoose.Schema({
     profilePic:{
         type: String
     },
-    Advertisements:[{
-        type: mongoose.Types.ObjectId,
-        ref: 'Property'
-    }],
     Favorite:[{
         type: mongoose.Types.ObjectId,
         ref: 'Property'

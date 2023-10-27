@@ -5,7 +5,8 @@ import jwt from 'jsonwebtoken'
 import asyncHandler from "express-async-handler"
 import {validateMongoID} from "../utils/validateMongoID.js"
 import {generateToken, generateRefreshToken} from '../config/generateJWT.js'
-
+import passport from 'passport'
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 /* #TODO:
 adding validation to register
 */
@@ -80,6 +81,10 @@ const adminLogin = asyncHandler(async (req, res, next) => {
     }
 })
 
+const logout = asyncHandler(async (req, res, next) => {
+
+})
+
 const handleRefreshToken = asyncHandler(async (req, res , next) => {
         const {_id} = req.user;
         validateMongoID(_id);
@@ -96,4 +101,9 @@ const handleRefreshToken = asyncHandler(async (req, res , next) => {
         }
 })
 
-export {register, login, adminLogin, handleRefreshToken}
+  
+const googleRedirect = asyncHandler(async(req, res, next) => {
+    res.status(301).redirect('/api/user/profile')
+})
+
+export {register, login, adminLogin, handleRefreshToken, googleRedirect}

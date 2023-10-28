@@ -1,6 +1,8 @@
 import 'dotenv/config'
 import "./config/database.js"
+import './config/passportConf.js'
 import express from 'express'
+import passport from 'passport'
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import cors from 'cors'
@@ -16,6 +18,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(cors())
 app.use(cookieParser())
+app.use(passport.initialize())
 app.use(morgan("dev"))
 app.use('/api/auth', authRouter)
 app.use('/api/user', userRouter)

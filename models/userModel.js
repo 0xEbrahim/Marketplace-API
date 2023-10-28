@@ -18,6 +18,10 @@ var userSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
+    slug:{
+        type:String,
+        unique:true
+    },
     email:{
         type:String,
         required:true,
@@ -26,8 +30,8 @@ var userSchema = new mongoose.Schema({
     },
     mobile:{
         type:String,
-        //required:true,
-        //unique:true,
+        required:true,
+        unique:true,
     },
     password:{
         type:String,

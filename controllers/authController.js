@@ -4,11 +4,13 @@ import {ERROR, FAIL, SUCCESS} from '../utils/errorText.js'
 import jwt from 'jsonwebtoken'
 import asyncHandler from "express-async-handler"
 import {validateMongoID} from "../utils/validateMongoID.js"
-import {generateToken, generateRefreshToken} from '../config/generateJWT.js'
+import {generateToken, generateRefreshToken, resetPasswordToken} from '../config/generateJWT.js'
 import queryString from 'query-string'
 import axios from 'axios'
-
-/* #TODO:
+import passport from 'passport'
+import { validationResult } from 'express-validator'
+import { sendEmail } from '../config/emailSend.js'
+/* #FIXME:
 adding validation to register
 */
 const register = asyncHandler(async (req, res, next) => {
@@ -104,4 +106,90 @@ const handleRefreshToken = asyncHandler(async (req, res , next) => {
         }
 })
 
-export {register, login, adminLogin, handleRefreshToken}
+
+// TODO: add google auth
+const googleAuth = passport.authenticate('google',{
+        session: false,
+        scope: ['email', 'profile'],
+        passReqToCallback: true
+    }
+)
+
+
+const callbackRedirect = asyncHandler(async(req, res, next) => {
+
+    const {_id} = req.user;
+
+    validateMongoID(_id);
+
+    const accessToken = await generateToken({id : _id});
+
+    const refreshToken = await generateRefreshToken({id : _id});
+
+    res.cookie('refreshToken',refreshToken,{
+        maxAge: 72 * 60 * 60 * 60 
+    })
+
+    res.json({status : SUCCESS, data: {
+        accessToken
+    }})
+})
+
+const changePassword = asyncHandler(async(req, res, next) => {
+    const {_id} = req.user;
+    validationResult(_id);
+    const {password} = req.body;
+    const user = await User.findById(_id);
+    user.password = password;
+    await user.save();
+    res.json({status: SUCCESS, data : user});
+})
+
+const forgotPassword = asyncHandler(async (req, res, next) => {
+    const {email} = req.body;
+    const user = await User.findOne({email});
+    if(!user){
+        throw appError.create("There is no user with this email.", 400, ERROR);
+    }else{
+        const token = await resetPasswordToken({id: user._id});
+        const resetURL = `Hi, please follow this link to reset your password. this link is valid till 30 minutes from now. <a href='http://localhost:5001/api/auth/reset-password/${token}'>Click Here</a>`
+        const data = {
+            to:email,
+            subject:"Trying NodeMailor",
+            text:"Welcome to free trial",
+            htm:resetURL
+        }
+        sendEmail(data);
+        res.json({status: SUCCESS, message: "Check the link recieved on your email."})
+    }
+})
+
+const resetPassword = asyncHandler(async(req, res, next) => {
+        const {token} = req.params;
+        const decodedToken = await jwt.verify(token, process.env.JWT_SECRET_KEY)
+        const {id} = decodedToken;
+        const user = await User.findById(id);
+        if(!user){
+            throw appError.create("Resource not found");
+        }else{
+            const {password} = req.body;
+            user.password = password;
+            await user.save();
+            res.json({status: SUCCESS, data: user})
+        }
+})
+
+
+
+
+export {
+    register,
+    login,
+    adminLogin,
+    handleRefreshToken,
+    googleAuth,
+    callbackRedirect,
+    changePassword,
+    forgotPassword,
+    resetPassword
+}

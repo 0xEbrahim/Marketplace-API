@@ -8,5 +8,9 @@ const generateRefreshToken = async (id) => {
     return await jwt.sign(id ,process.env.JWT_SECRET_KEY, {expiresIn:'3d'});
 }
 
+const resetPasswordToken = async(id) => {
+    return await jwt.sign(id ,process.env.JWT_SECRET_KEY, {expiresIn:'10m'});
+}
 
-export {generateToken, generateRefreshToken}
+
+export {generateToken, generateRefreshToken, resetPasswordToken}

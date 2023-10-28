@@ -11,6 +11,7 @@ const authMiddleware = asyncHandler(async(req, res, next) => {
          const{ id } = await jwt.verify(token, process.env.JWT_SECRET_KEY) ;
          const user = await User.findById(id);
     if(!user){
+        //console.log(user)
         throw appError.create('Unauthorized', 401, FAIL);
     }else{
         req.user = user;

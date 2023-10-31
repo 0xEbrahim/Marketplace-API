@@ -28,7 +28,8 @@ const propertySchema = new mongoose.Schema({
     },
     yearOfDelivery:{
         type:String
-    }
+    },
+    
 },{
     timestamps: true
 }

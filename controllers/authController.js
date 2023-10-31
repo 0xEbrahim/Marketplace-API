@@ -86,7 +86,7 @@ const adminLogin = asyncHandler(async (req, res, next) => {
 
 // #TODO: Write logout logic
 const logout = asyncHandler(async (req, res, next) => {
-
+    
 })
 
 const handleRefreshToken = asyncHandler(async (req, res , next) => {
@@ -152,6 +152,8 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
         throw appError.create("There is no user with this email.", 400, ERROR);
     }else{
         const token = await resetPasswordToken({id: user._id});
+        user.passwordResetToken = token;
+        await user.save()
         const resetURL = `Hi, please follow this link to reset your password. this link is valid till 30 minutes from now. <a href='http://localhost:5001/api/auth/reset-password/${token}'>Click Here</a>`
         const data = {
             to:email,
@@ -166,14 +168,13 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 
 const resetPassword = asyncHandler(async(req, res, next) => {
         const {token} = req.params;
-        const decodedToken = await jwt.verify(token, process.env.JWT_SECRET_KEY)
-        const {id} = decodedToken;
-        const user = await User.findById(id);
+        const user = await User.findOne({passwordResetToken: token});
         if(!user){
-            throw appError.create("Resource not found");
+            throw appError.create("Expired or invalid token", 401 , ERROR);
         }else{
             const {password} = req.body;
             user.password = password;
+            user.passwordResetToken = null;
             await user.save();
             res.json({status: SUCCESS, data: user})
         }
@@ -191,5 +192,6 @@ export {
     callbackRedirect,
     changePassword,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    logout
 }

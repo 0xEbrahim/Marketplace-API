@@ -56,7 +56,22 @@ var userSchema = new mongoose.Schema({
     pending:[{
         type: mongoose.Types.ObjectId,
         ref: 'Property'
-    }]
+    }],
+    passwordResetToken:{
+        type:String,
+        default:null
+    },
+    verified:{
+        type: Boolean,
+        default: false,
+    },
+    deleted:{
+        type:Boolean,
+        default: false
+    },
+    verificationCode:{
+        type:String
+    }
 },{
     timestamps: true
 });

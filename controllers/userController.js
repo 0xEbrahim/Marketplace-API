@@ -17,6 +17,19 @@ const getAllUsers = asyncHandler(async (req, res, next)=>{
     }})
 })
 
+const yourProfile = asyncHandler(async(req, res, next) => {
+    const {_id} = req.user;
+    validateMongoID(_id);
+    const user = await User.findById(_id);
+    if(!user){
+        throw appError.create("Resource not found.", 404, ERROR);
+    }else{
+        res.status(200).json({status: SUCCESS, data : {
+            user
+        }})
+    }
+})
+
 const getSingleUsers = asyncHandler(async (req, res, next)=>{
     const {id} = req.params;
     validateMongoID(id);
@@ -32,7 +45,11 @@ const getSingleUsers = asyncHandler(async (req, res, next)=>{
 const updateUsers = asyncHandler(async (req, res, next)=>{
     const {_id} = req.user;
     validateMongoID(_id);
-    const user = await User.findByIdAndUpdate(_id, {...req.body}, {new: true});
+    const pic = req.file;
+    let user = await User.findByIdAndUpdate(_id, {...req.body}, {new: true});
+    if(pic){
+    user = await User.findByIdAndUpdate(_id, {profilePic : pic.path}, {new: true});
+    }
     if(!user)
     throw appError.create("Resource not found.", 404, ERROR);
 else
@@ -85,13 +102,13 @@ const finalVerify = asyncHandler(async(req, res, next) => {
     }
 })
 
-const updateProfilePic = asyncHandler(async (req, res, next) => {
-    const img = req.file;
-    if(img){
-        res.json({status: SUCCESS})
-    }else{
-        throw appError.create("Resource not found", 404 , ERROR)
-    }
+// user favourite 
+const addToFav = asyncHandler(async(req, res, next) => {
+
 })
 
-export {getAllUsers, getSingleUsers, updateUsers, deleteUsers, verifyAccount, finalVerify, updateProfilePic}
+
+
+
+
+export {yourProfile, getAllUsers, getSingleUsers, updateUsers, deleteUsers, verifyAccount, finalVerify}

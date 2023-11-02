@@ -19,7 +19,7 @@ const userStorage = multer.diskStorage({
 
 const propStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null,path.join(__dirname,'../images/users'))
+        cb(null,path.join(__dirname,'../images/property'))
     },
     filename: (req, file, cb) => {
         //console.log(file);

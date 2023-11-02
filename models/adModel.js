@@ -37,8 +37,7 @@ const adSchema = new mongoose.Schema({
     },
     pictures:[],
     advantages:[],
-    location:{
-      
+    location:{ 
     },
     owner:{
         type: mongoose.Types.ObjectId,

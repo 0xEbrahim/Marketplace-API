@@ -86,7 +86,18 @@ const adminLogin = asyncHandler(async (req, res, next) => {
 
 // #TODO: Write logout logic
 const logout = asyncHandler(async (req, res, next) => {
-    
+    const {_id} = req.user;
+    validateMongoID(_id);
+    const user = await User.findById(_id);
+    if(!user){
+        throw appError.create("Resource not found.", 404, ERROR);
+    }else{
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure:true,
+        })
+        res.send("ok")
+    }
 })
 
 const handleRefreshToken = asyncHandler(async (req, res , next) => {
@@ -193,5 +204,6 @@ export {
     changePassword,
     forgotPassword,
     resetPassword,
-    logout
+    logout,
+    
 }

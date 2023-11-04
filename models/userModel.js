@@ -49,13 +49,13 @@ var userSchema = new mongoose.Schema({
     profilePic:{
         type: String
     },
-    Favorite:[{
+    Favourite:[{
         type: mongoose.Types.ObjectId,
-        ref: 'Property'
+        ref: 'Ad'
     }],
     pending:[{
         type: mongoose.Types.ObjectId,
-        ref: 'Property'
+        ref: 'Ad'
     }],
     passwordResetToken:{
         type:String,

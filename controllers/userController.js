@@ -1,4 +1,6 @@
 import User from '../models/userModel.js'
+import Property from '../models/propertyModel.js'
+import Ad from "../models/adModel.js"
 import appError from '../utils/error.js'
 import {ERROR, FAIL, SUCCESS} from '../utils/errorText.js'
 import asyncHandler from "express-async-handler"
@@ -102,13 +104,41 @@ const finalVerify = asyncHandler(async(req, res, next) => {
     }
 })
 
+const userAds = asyncHandler(async(req, res, next) => {
+    const {_id} = req.user;
+    validateMongoID(_id);
+    const yourAds = await Ad.find({owner : _id});
+    if(!yourAds){
+        res.json({status:SUCCESS, msg:"You don't have any ads, yet."})
+    }else{
+        res.json({status: SUCCESS, data : {
+            yourAds
+        }})
+    }
+})
+
 // user favourite 
 const addToFav = asyncHandler(async(req, res, next) => {
-
+    const {_id} = req.user;
+    const {id} = req.params;
+    validateMongoID(_id);
+    validateMongoID(id);
+    let user = await User.findById(_id);
+    const ad = await Ad.findById(id);
+    if(!ad)
+        throw appError.create("Resource not found", 404, FAIL);
+    const isAlreadyIn = await user.Favourite.find(el => el.toString() === id.toString());
+    if(isAlreadyIn){
+        user = await User.findByIdAndUpdate(_id, {$pull: {Favourite : ad._id}}, {new : true});
+    }else{
+        user = await User.findByIdAndUpdate(_id, {$push: {Favourite : ad._id}}, {new : true});
+    }
+    await user.populate('Favourite');
+    res.json({status: SUCCESS, data : {user}})
 })
 
 
 
 
 
-export {yourProfile, getAllUsers, getSingleUsers, updateUsers, deleteUsers, verifyAccount, finalVerify}
+export {yourProfile, getAllUsers, getSingleUsers, updateUsers, deleteUsers, verifyAccount, finalVerify, userAds, addToFav}

@@ -5,9 +5,12 @@ const adSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    slug:{
+        type:String,
+        unique:true
+    },
     AdType: {
         type: String,
-        enum:["for sell", "for rent","investment"],
         required: true,
     },
     propertyType:{
@@ -25,7 +28,6 @@ const adSchema = new mongoose.Schema({
     sellingSystem:{
         type:String,
         required:true,
-        enum:["Cash","Installment"]
     },
     propertyDetails:{
         type:mongoose.Types.ObjectId,
@@ -37,8 +39,41 @@ const adSchema = new mongoose.Schema({
     },
     pictures:[],
     advantages:[],
-    location:{ 
+    address:{ 
+       name:{
+        type: String,
+        required: true,
+       },
+       gov: {
+        type: String,
+        required: true,
+       },
+       region : {
+        type: String,
+        required: true,
+       },
+       lat:{
+        type: String
+       },
+       lang:{
+        type: String
+       }
     },
+    // Address:{
+    //     type: JSON,
+    //     required: true,
+    // },
+    Governorate:{
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "Governorate"
+    },
+    Region:{
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: "Region"
+    }
+    ,
     owner:{
         type: mongoose.Types.ObjectId,
         ref:"User"

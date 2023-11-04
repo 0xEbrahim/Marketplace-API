@@ -41,6 +41,7 @@
     "sharp": "^0.32.6",
     "sluggy": "^0.1.0",
     "slugify": "^1.6.6",
+    "translate-google": "^1.5.0",
     "uniqid": "^5.4.0"
   }
 }

@@ -5,11 +5,10 @@ import { authMiddleware , isAdmin} from "../middlewares/authMiddleware.js";
 import { propUplload } from "../middlewares/multer.js";
 
 router.post('/create',authMiddleware, propUplload.array('image'), createAd)
-
 router.get('/',getAllAds)
 router.get('/:id', getSingleAd);
 router.delete('/delete/:id', deleteAd);
-router.put('/edit/:id', editAd);
+router.put('/edit/:id', authMiddleware, propUplload.array('image') ,editAd);
 
 
 export default router

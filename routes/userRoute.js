@@ -1,7 +1,6 @@
 import express from 'express';
 import {deleteUsers, updateUsers, getAllUsers, getSingleUsers, verifyAccount, finalVerify, yourProfile, userAds, addToFav} from '../controllers/userController.js'
 import { authMiddleware, isAdmin } from '../middlewares/authMiddleware.js';
-import {imageUpload} from '../config/imageUpload.js'
 import { userUpload } from '../middlewares/multer.js';
 const router = express.Router();
 

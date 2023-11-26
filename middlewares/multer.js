@@ -12,7 +12,6 @@ const userStorage = multer.diskStorage({
         cb(null,path.join(__dirname,'../images/users'))
     },
     filename: (req, file, cb) => {
-        //console.log(file);
         cb(null, file.fieldname + Date.now() +"-" + Math.round(Math.random() * 1e9) + ".jpeg")
     }
 })
@@ -22,7 +21,6 @@ const propStorage = multer.diskStorage({
         cb(null,path.join(__dirname,'../images/property'))
     },
     filename: (req, file, cb) => {
-        //console.log(file);
         cb(null, file.fieldname + Date.now() +"-" + Math.round(Math.random() * 1e9) + ".jpeg")
     }
 })
